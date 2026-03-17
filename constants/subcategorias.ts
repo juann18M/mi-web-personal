@@ -1,0 +1,55 @@
+export const SUBCATEGORIAS = {
+  mujer: [ 
+    'Leggings',
+    'Pants Deportivos',
+    'Sudadores',
+    'Oversice',
+    'Sacos dama',
+    'Tops',
+    'Playera ',
+    'Gabardinas',
+    'Chamarras',
+    'Camisas',
+    'Pantalones',
+    'Vestidos',
+    'Faldas',
+    'Shorts',
+    'Camisa Manga Larga'
+  ],
+  hombre: [  
+    'Pants Deportivos',
+    'Cargo',
+    'Pantalon',
+    'Sudaderas',
+    'Chamarras',
+    'Playeras',
+    'Camisas',
+    'Short',
+    'Jersey\'s',
+    'Bermudas',
+    'Camiseta Manga Larga'
+  ],
+  accesorios: [  
+    'Reloj Caballero',
+    'Reloj Dama',
+    'Mochilas Dama',
+    'Mochilas Caballero',
+    'Bolsas de Mano',
+    'Carteras',
+    'Bolsos',
+    'Termos',
+    'Perfumes',
+    'Gorras',
+    'Calcetas',
+    'Aretes',
+    'collares',
+    'calzado',
+    'Boxer',
+    'Brochas',
+    'Maquillaje',
+    'Toallas',
+    'Calcetas',
+  ]
+} as const;
+
+export type CategoriaPrincipal = 'hombre' | 'mujer' | 'accesorios';
