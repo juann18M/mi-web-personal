@@ -60,7 +60,7 @@ export default function CheckoutPage() {
             id: item.id,
             nombre: item.nombre,
             precio: Number(item.precio),
-            imagen: item.imagen || item.image || null,
+           imagen: item.imagen || null,
             talla: item.talla,
             cantidad: item.cantidad
           })),

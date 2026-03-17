@@ -9,6 +9,7 @@ interface CartItem {
   precio_original: number;
   imagen: string;
   talla?: string | null;
+  color?: string | null; // <-- Agregado
   cantidad: number;
   precio_normal: number;
   en_oferta?: boolean;

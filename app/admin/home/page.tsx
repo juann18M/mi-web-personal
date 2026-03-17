@@ -921,7 +921,7 @@ export default function AdminPage() {
                             className="w-full p-3 border rounded-xl"
                           >
                             <option value="">Seleccionar subcategoría...</option>
-                            {getSubcategoriasPorCategoria(editingProduct.categoria).map((sub) => (
+                            {getSubcategoriasPorCategoria(editingProduct.categoria as CategoriaPrincipal).map((sub) => (
                               <option key={sub} value={sub}>
                                 {sub}
                               </option>
@@ -1260,7 +1260,7 @@ export default function AdminPage() {
                           className="w-full bg-gray-50 p-3 rounded-xl border-2 border-transparent focus:border-black focus:bg-white transition-all outline-none"
                         >
                           <option value="">Seleccionar subcategoría...</option>
-                          {getSubcategoriasPorCategoria(newProduct.categoria).map((sub) => (
+                          {getSubcategoriasPorCategoria(newProduct.categoria as CategoriaPrincipal).map((sub) => (
                             <option key={sub} value={sub}>
                               {sub}
                             </option>

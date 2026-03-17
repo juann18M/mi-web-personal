@@ -55,48 +55,42 @@ export async function GET(
       return url.startsWith('/') ? url : `/${url}`;
     };
 
-    // Parsear los campos JSON para cada producto (manejando errores)
+    // Parsear los campos JSON para cada producto
     const productoParseado = {
       ...producto,
-      // Normalizar la imagen principal
       imagen: producto.imagen ? normalizarUrl(producto.imagen) : null,
-      
-     // Parsear y normalizar imágenes adicionales
-imagenes_adicionales: (() => {
-  if (!producto.imagenes_adicionales) return [];
-  
-  // Si es string, intentar parsear
-  if (typeof producto.imagenes_adicionales === 'string') {
-    try {
-      // Intentar parsear el JSON
-      const parsed = JSON.parse(producto.imagenes_adicionales);
-      // Si el parseo fue exitoso y es un array
-      if (Array.isArray(parsed)) {
-        return parsed.map(url => normalizarUrl(url));
-      }
-      // Si es un string pero no es un array JSON
-      return [normalizarUrl(producto.imagenes_adicionales)];
-    } catch {
-      // Si falla el parseo, podría ser una URL simple o CSV
-      if (producto.imagenes_adicionales.includes(',')) {
-        return producto.imagenes_adicionales.split(',').map((s: string) => 
-          normalizarUrl(s.trim())
-        );
-      }
-      // Es una URL sola
-      return [normalizarUrl(producto.imagenes_adicionales)];
-    }
-  }
-  
-  // Si por alguna razón ya es un array
-  if (Array.isArray(producto.imagenes_adicionales)) {
-    return producto.imagenes_adicionales.map(url => normalizarUrl(url));
-  }
-  
-  return [];
-})(),
-      
-      // Parsear videos (sin normalizar porque son URLs de YouTube generalmente)
+
+      // Imágenes adicionales
+      imagenes_adicionales: (() => {
+        if (!producto.imagenes_adicionales) return [];
+
+        if (typeof producto.imagenes_adicionales === 'string') {
+          try {
+            const parsed = JSON.parse(producto.imagenes_adicionales);
+            if (Array.isArray(parsed)) {
+              return parsed.map((url: string) => normalizarUrl(url));
+            }
+            return [normalizarUrl(producto.imagenes_adicionales)];
+          } catch {
+            if (producto.imagenes_adicionales.includes(',')) {
+              return producto.imagenes_adicionales
+                .split(',')
+                .map((s: string) => normalizarUrl(s.trim()));
+            }
+            return [normalizarUrl(producto.imagenes_adicionales)];
+          }
+        }
+
+        if (Array.isArray(producto.imagenes_adicionales)) {
+          return producto.imagenes_adicionales.map((url: string) =>
+            normalizarUrl(url)
+          );
+        }
+
+        return [];
+      })(),
+
+      // Videos
       videos: (() => {
         if (!producto.videos) return [];
         if (Array.isArray(producto.videos)) return producto.videos;
@@ -106,35 +100,43 @@ imagenes_adicionales: (() => {
             return Array.isArray(parsed) ? parsed : [];
           } catch {
             if (producto.videos.includes(',')) {
-              return producto.videos.split(',').map((s: string) => s.trim());
+              return producto.videos
+                .split(',')
+                .map((s: string) => s.trim());
             }
             return [producto.videos];
           }
         }
         return [];
       })(),
-      
-      // Parsear colores disponibles
+
+      // Colores disponibles
       colores_disponibles: (() => {
         if (!producto.colores_disponibles) return [];
-        if (Array.isArray(producto.colores_disponibles)) return producto.colores_disponibles;
+        if (Array.isArray(producto.colores_disponibles))
+          return producto.colores_disponibles;
         if (typeof producto.colores_disponibles === 'string') {
           try {
             const parsed = JSON.parse(producto.colores_disponibles);
             return Array.isArray(parsed) ? parsed : [];
           } catch {
             if (producto.colores_disponibles.includes(',')) {
-              return producto.colores_disponibles.split(',').map((s: string) => s.trim());
+              return producto.colores_disponibles
+                .split(',')
+                .map((s: string) => s.trim());
             }
             return [producto.colores_disponibles];
           }
         }
         return [];
-      })()
+      })(),
     };
 
-    console.log('Producto parseado - imágenes adicionales:', productoParseado.imagenes_adicionales);
-    
+    console.log(
+      'Producto parseado - imágenes adicionales:',
+      productoParseado.imagenes_adicionales
+    );
+
     return NextResponse.json(productoParseado);
   } catch (error) {
     console.error("Error en GET /api/productos/[id]:", error);
@@ -152,8 +154,6 @@ export async function PUT(
   try {
     const { id } = await params;
     const data = await request.json();
-
-    console.log('Actualizando producto con datos:', data);
 
     const {
       nombre,
@@ -180,16 +180,14 @@ export async function PUT(
       cantidad_mayoreo_3
     } = data;
 
-    console.log('Procesando campos:');
-    console.log('- imagenes_adicionales:', imagenes_adicionales);
-    console.log('- videos:', videos);
-    console.log('- colores_disponibles:', colores_disponibles);
-
     const precioNum = parseFloat(precio);
-    const precioOfertaNum = precio_oferta && parseFloat(precio_oferta) > 0 ? parseFloat(precio_oferta) : null;
+    const precioOfertaNum =
+      precio_oferta && parseFloat(precio_oferta) > 0
+        ? parseFloat(precio_oferta)
+        : null;
     const stockNum = parseInt(stock, 10) || 0;
     const enOfertaBool = en_oferta === true || en_oferta === 1 || en_oferta === 'true';
-    
+
     const precioMayoreo1 = precio_mayoreo_1 ? parseFloat(precio_mayoreo_1) : null;
     const cantidadMayoreo1 = cantidad_mayoreo_1 ? parseInt(cantidad_mayoreo_1, 10) : 0;
     const precioMayoreo2 = precio_mayoreo_2 ? parseFloat(precio_mayoreo_2) : null;
@@ -197,38 +195,27 @@ export async function PUT(
     const precioMayoreo3 = precio_mayoreo_3 ? parseFloat(precio_mayoreo_3) : null;
     const cantidadMayoreo3 = cantidad_mayoreo_3 ? parseInt(cantidad_mayoreo_3, 10) : 0;
 
-    // Función para quitar la / inicial antes de guardar
     const quitarBarraInicial = (url: string): string => {
       if (!url) return url;
       return url.startsWith('/') ? url.substring(1) : url;
     };
 
-    // Normalizar imagen principal (quitar / inicial)
     const imagenNormalizada = imagen ? quitarBarraInicial(imagen) : null;
-    
-    // Normalizar URLs de imágenes adicionales (quitar / inicial)
+
     const imagenesAdicionalesNormalizadas = imagenes_adicionales
-      .map(url => quitarBarraInicial(url))
-      .filter(url => url); // Filtrar vacías
+      .map((url: string) => quitarBarraInicial(url))
+      .filter((url: string) => url);
 
-    // Normalizar URLs de videos (no quitamos / porque son URLs de YouTube)
-    const videosNormalizados = videos.filter(url => url);
+    const videosNormalizados = videos.filter((url: string) => url);
 
-    // Convertir arrays a JSON SOLO si tienen elementos, si no, guardar NULL
-    const imagenesAdicionalesJSON = imagenesAdicionalesNormalizadas.length > 0 
-      ? JSON.stringify(imagenesAdicionalesNormalizadas) 
-      : null;
-    const videosJSON = videosNormalizados.length > 0 
-      ? JSON.stringify(videosNormalizados) 
-      : null;
-    const coloresDisponiblesJSON = colores_disponibles.length > 0 
-      ? JSON.stringify(colores_disponibles) 
-      : null;
-
-    console.log('JSON a guardar:');
-    console.log('- imagenesAdicionalesJSON:', imagenesAdicionalesJSON);
-    console.log('- videosJSON:', videosJSON);
-    console.log('- coloresDisponiblesJSON:', coloresDisponiblesJSON);
+    const imagenesAdicionalesJSON =
+      imagenesAdicionalesNormalizadas.length > 0
+        ? JSON.stringify(imagenesAdicionalesNormalizadas)
+        : null;
+    const videosJSON =
+      videosNormalizados.length > 0 ? JSON.stringify(videosNormalizados) : null;
+    const coloresDisponiblesJSON =
+      colores_disponibles.length > 0 ? JSON.stringify(colores_disponibles) : null;
 
     await db.query(
       `
@@ -285,9 +272,9 @@ export async function PUT(
       ]
     );
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: "Producto actualizado correctamente",
-      imagenes_adicionales: imagenesAdicionalesNormalizadas // Para verificar en frontend
+      imagenes_adicionales: imagenesAdicionalesNormalizadas
     });
   } catch (error) {
     console.error("Error en PUT /api/productos/[id]:", error);

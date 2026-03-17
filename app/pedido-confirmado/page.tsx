@@ -1,10 +1,12 @@
-"use client";
+'use client';
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from 'next/navigation';
 
-export default function Confirmado() {
+export default function ConfirmadoClient() {
   const params = useSearchParams();
-  const id = params.get("id");
+  const id = params.get('id');
+
+  if (!id) return <p>Cargando...</p>; // opcional, evita flashes
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">

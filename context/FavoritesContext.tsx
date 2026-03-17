@@ -10,6 +10,7 @@ interface FavoriteItem {
   precio: number;
   precio_oferta: number | null;
   en_oferta: boolean;
+  color?: string | null; // <-- agrega esto
   imagen: string;
   talla?: string | null;
 }

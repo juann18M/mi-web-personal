@@ -25,6 +25,8 @@ export default function FavoritosPage() {
         id: item.id,
         nombre: item.nombre,
         precio: item.en_oferta && item.precio_oferta ? item.precio_oferta : item.precio,
+        precio_original: item.precio,   // obligatorio
+        precio_normal: item.precio,     // obligatorio
         imagen: item.imagen,
         talla: item.talla || null,
         cantidad: 1,
@@ -38,6 +40,8 @@ export default function FavoritosPage() {
       id: item.id,
       nombre: item.nombre,
       precio: item.en_oferta && item.precio_oferta ? item.precio_oferta : item.precio,
+      precio_original: item.precio,   // obligatorio
+      precio_normal: item.precio,     // obligatorio
       imagen: item.imagen,
       talla: item.talla || null,
       cantidad: 1,
